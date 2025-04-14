@@ -19,6 +19,9 @@ import huggingface_hub
 import importlib.util
 from safetensors.torch import load_file
 import folder_paths
+flash_attn_available = True
+sdpa_available = True
+
 
 # --- Optional Dependency Handling ---
 try:
