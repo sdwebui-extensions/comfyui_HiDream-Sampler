@@ -1,19 +1,288 @@
 {
   "id": "64c118a4-1506-48f5-a531-a0620e2d46fe",
   "revision": 0,
-  "last_node_id": 22,
-  "last_link_id": 38,
+  "last_node_id": 24,
+  "last_link_id": 40,
   "nodes": [
+    {
+      "id": 13,
+      "type": "Note",
+      "pos": [
+        -280,
+        -180
+      ],
+      "size": [
+        240,
+        160
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "Negative Prompt only works for Full & full-nf4 models.\n\nnf4 models require ~15GB of VRAM\nnon-nf4 models require ~27GB of VRAM"
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 21,
+      "type": "PrimitiveNode",
+      "pos": [
+        -280,
+        -380
+      ],
+      "size": [
+        240,
+        140
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "widget": {
+            "name": "primary_prompt"
+          },
+          "links": [
+            37,
+            38
+          ]
+        }
+      ],
+      "title": "Input Primary Prompt",
+      "properties": {
+        "Run widget replace on values": false
+      },
+      "widgets_values": [
+        "A collectable rare postage stamp with the text \"US Postal Service\" and the year \"1918\" and the price of 15 cents, featuring a US WW1 Soldier peeking over the top of a trench, stamp collection"
+      ],
+      "color": "#232",
+      "bgcolor": "#353"
+    },
+    {
+      "id": 2,
+      "type": "PreviewImage",
+      "pos": [
+        380,
+        -180
+      ],
+      "size": [
+        440,
+        420
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 28
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "PreviewImage",
+        "cnr_id": "comfy-core",
+        "ver": "0.3.27"
+      },
+      "widgets_values": [
+        ""
+      ],
+      "color": "#2a363b",
+      "bgcolor": "#3f5159"
+    },
+    {
+      "id": 17,
+      "type": "PreviewImage",
+      "pos": [
+        1220,
+        -180
+      ],
+      "size": [
+        460,
+        460
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 30
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "PreviewImage",
+        "cnr_id": "comfy-core",
+        "ver": "0.3.27"
+      },
+      "widgets_values": [
+        ""
+      ],
+      "color": "#223",
+      "bgcolor": "#335"
+    },
+    {
+      "id": 24,
+      "type": "PreviewImage",
+      "pos": [
+        2120,
+        -180
+      ],
+      "size": [
+        460,
+        460
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 40
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "PreviewImage",
+        "cnr_id": "comfy-core",
+        "ver": "0.3.27"
+      },
+      "widgets_values": [
+        ""
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 23,
+      "type": "HiDreamImg2Img",
+      "pos": [
+        1700,
+        -180
+      ],
+      "size": [
+        400,
+        580
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 39
+        }
+      ],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": [
+            40
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "HiDreamImg2Img"
+      },
+      "widgets_values": [
+        "dev-nf4",
+        0.8000000000000002,
+        "A collectable rare postage stamp with the text \"US Postal Service\" and the year \"1918\" and the price of 15 cents, featuring Micky Mouse peeking over the top of a trench, stamp collection",
+        "",
+        77982949035763,
+        "randomize",
+        "Default for model",
+        -1,
+        -1,
+        false,
+        "You are a creative AI assistant that helps create detailed, vivid images based on user descriptions.",
+        1,
+        1,
+        1,
+        1
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 7,
+      "type": "HiDreamSampler",
+      "pos": [
+        840,
+        -180
+      ],
+      "size": [
+        340,
+        352
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "prompt",
+          "type": "STRING",
+          "widget": {
+            "name": "prompt"
+          },
+          "link": 38
+        }
+      ],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": [
+            30,
+            39
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "HiDreamSampler",
+        "aux_id": "SanDiegoDude/ComfyUI-HiDream-Sampler",
+        "ver": "ae6c2ac8896c26b1fc0e58b8f70d478881663dd2"
+      },
+      "widgets_values": [
+        "dev-nf4",
+        "A collectable rare postage stamp with the text \"US Postal Service\" and the year \"1918\" and the price of 15 cents, featuring a US WW1 Soldier peeking over the top of a trench, stamp collection",
+        "",
+        "1024 × 1024 (Square)",
+        1,
+        42,
+        "fixed",
+        "Default for model",
+        -1,
+        -1,
+        0,
+        0
+      ],
+      "color": "#223",
+      "bgcolor": "#335"
+    },
     {
       "id": 19,
       "type": "HiDreamSamplerAdvanced",
       "pos": [
-        200,
-        -80
+        0,
+        -180
       ],
       "size": [
         360,
-        810
+        838
       ],
       "flags": {},
       "order": 2,
@@ -46,18 +315,25 @@
         "dev-nf4",
         "A collectable rare postage stamp with the text \"US Postal Service\" and the year \"1918\" and the price of 15 cents, featuring a US WW1 Soldier peeking over the top of a trench, stamp collection",
         "deformed, ugly, watermark, text, scribbles, noise, static, low quality, bad quality, jpeg artifacts, low resolution",
-        1280,
-        1280,
-        1001,
+        "1024 × 1024 (Square)",
+        4,
+        42,
         "fixed",
-        "UniPC",
+        "Default for model",
         -1,
         -1,
+        false,
+        0,
         false,
         "painted by Georgia O'Keefe",
         "painted by Georgia O'Keefe",
         "painted by Georgia O'Keefe",
         "",
+        "You are a creative AI assistant that helps create detailed, vivid images based on user descriptions.",
+        1,
+        1,
+        1,
+        1,
         77,
         150,
         256,
@@ -65,185 +341,6 @@
       ],
       "color": "#2a363b",
       "bgcolor": "#3f5159"
-    },
-    {
-      "id": 13,
-      "type": "Note",
-      "pos": [
-        190,
-        -270
-      ],
-      "size": [
-        700,
-        120
-      ],
-      "flags": {},
-      "order": 0,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [],
-      "properties": {},
-      "widgets_values": [
-        "Negative Prompt only works for Full & full-nf4 models.\n\nnf4 models require ~15GB of VRAM\nnon-nf4 models require ~27GB of VRAM"
-      ],
-      "color": "#432",
-      "bgcolor": "#653"
-    },
-    {
-      "id": 2,
-      "type": "PreviewImage",
-      "pos": [
-        580,
-        -70
-      ],
-      "size": [
-        740,
-        760
-      ],
-      "flags": {},
-      "order": 4,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 28
-        }
-      ],
-      "outputs": [],
-      "properties": {
-        "Node name for S&R": "PreviewImage",
-        "cnr_id": "comfy-core",
-        "ver": "0.3.27"
-      },
-      "widgets_values": [
-        ""
-      ],
-      "color": "#2a363b",
-      "bgcolor": "#3f5159"
-    },
-    {
-      "id": 21,
-      "type": "PrimitiveNode",
-      "pos": [
-        -260,
-        -30
-      ],
-      "size": [
-        440,
-        150
-      ],
-      "flags": {},
-      "order": 1,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "STRING",
-          "type": "STRING",
-          "widget": {
-            "name": "primary_prompt"
-          },
-          "links": [
-            37,
-            38
-          ]
-        }
-      ],
-      "title": "Input Primary Prompt",
-      "properties": {
-        "Run widget replace on values": false
-      },
-      "widgets_values": [
-        "A collectable rare postage stamp with the text \"US Postal Service\" and the year \"1918\" and the price of 15 cents, featuring a US WW1 Soldier peeking over the top of a trench, stamp collection"
-      ],
-      "color": "#232",
-      "bgcolor": "#353"
-    },
-    {
-      "id": 17,
-      "type": "PreviewImage",
-      "pos": [
-        1730,
-        -70
-      ],
-      "size": [
-        740,
-        760
-      ],
-      "flags": {},
-      "order": 5,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 30
-        }
-      ],
-      "outputs": [],
-      "properties": {
-        "Node name for S&R": "PreviewImage",
-        "cnr_id": "comfy-core",
-        "ver": "0.3.27"
-      },
-      "widgets_values": [
-        ""
-      ],
-      "color": "#223",
-      "bgcolor": "#335"
-    },
-    {
-      "id": 7,
-      "type": "HiDreamSampler",
-      "pos": [
-        1340,
-        -70
-      ],
-      "size": [
-        360,
-        260
-      ],
-      "flags": {},
-      "order": 3,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "prompt",
-          "type": "STRING",
-          "widget": {
-            "name": "prompt"
-          },
-          "link": 38
-        }
-      ],
-      "outputs": [
-        {
-          "name": "image",
-          "type": "IMAGE",
-          "links": [
-            30
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "HiDreamSampler",
-        "aux_id": "SanDiegoDude/ComfyUI-HiDream-Sampler",
-        "ver": "ae6c2ac8896c26b1fc0e58b8f70d478881663dd2"
-      },
-      "widgets_values": [
-        "dev-nf4",
-        "A collectable rare postage stamp with the text \"US Postal Service\" and the year \"1918\" and the price of 15 cents, featuring a US WW1 Soldier peeking over the top of a trench, stamp collection",
-        "1024 × 1024 (Square)",
-        1001,
-        "fixed",
-        -1,
-        -0.1,
-        1280,
-        1280
-      ],
-      "color": "#223",
-      "bgcolor": "#335"
     }
   ],
   "links": [
@@ -278,16 +375,32 @@
       7,
       0,
       "STRING"
+    ],
+    [
+      39,
+      7,
+      0,
+      23,
+      0,
+      "IMAGE"
+    ],
+    [
+      40,
+      23,
+      0,
+      24,
+      0,
+      "IMAGE"
     ]
   ],
   "groups": [],
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.6727499949325623,
+      "scale": 0.620921323059155,
       "offset": [
-        60.057962303855,
-        146.1296234825435
+        395.180098046875,
+        515.8049533984378
       ]
     },
     "ue_links": [],
