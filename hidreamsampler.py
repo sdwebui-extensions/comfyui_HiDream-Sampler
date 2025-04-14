@@ -237,6 +237,8 @@ def load_models(model_type, use_uncensored_llm=False):
         else:
             llama_model_name = NF4_LLAMA_MODEL_NAME
             print(f"\n[1a] Preparing LLM (GPTQ): {llama_model_name}")
+        if not os.path.exists(os.path.join(folder_paths.models_dir, llama_model_name)) and os.path.exists(os.path.join(folder_paths.cache_dir, 'hf', llama_model_name)):
+            llama_model_name = os.path.join(folder_paths.cache_dir, 'hf', llama_model_name)
             
         # Rest of the NF4 loading process stays exactly the same
         if accelerate_available:
@@ -258,6 +260,9 @@ def load_models(model_type, use_uncensored_llm=False):
         else:
             llama_model_name = ORIGINAL_LLAMA_MODEL_NAME
             print(f"\n[1a] Preparing LLM (4-bit BNB): {llama_model_name}")
+        
+        if not os.path.exists(os.path.join(folder_paths.models_dir, llama_model_name)) and os.path.exists(os.path.join(folder_paths.cache_dir, 'hf', llama_model_name)):
+            llama_model_name = os.path.join(folder_paths.cache_dir, 'hf', llama_model_name)
             
         # Rest of standard model loading stays exactly the same
         if bnb_llm_config: text_encoder_load_kwargs["quantization_config"] = bnb_llm_config; print("     Using 4-bit BNB.")
