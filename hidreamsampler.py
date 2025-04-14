@@ -17,37 +17,12 @@ import os # For checking paths if needed
 import huggingface_hub
 from safetensors.torch import load_file
 # --- Optional Dependency Handling ---
-try:
-    import accelerate
-    accelerate_available = True
-except ImportError:
-    accelerate_available = False
-    print("Warning: accelerate not installed. device_map='auto' for GPTQ models will not be available.")
-try:
-    import auto_gptq
-    autogptq_available = True
-except ImportError:
-    autogptq_available = False
-    # Note: Optimum might still load GPTQ without auto-gptq if using ExLlama kernels,
-    # but it's often required. Add a warning if NF4 models are selected later.
-try:
-    import optimum
-    optimum_available = True
-except ImportError:
-    optimum_available = False
-    # Add a warning if NF4 models are selected later.
-try:
-    from transformers import BitsAndBytesConfig as TransformersBitsAndBytesConfig
-    from diffusers import BitsAndBytesConfig as DiffusersBitsAndBytesConfig
-    bnb_available = True
-except ImportError:
-    # This case was handled before, just confirm variable state
-    bnb_available = False
-    TransformersBitsAndBytesConfig = None
-    DiffusersBitsAndBytesConfig = None
-    print("Warning: bitsandbytes not installed. 4-bit BNB quantization will not be available.")
+accelerate_available = True
+autogptq_available = True
+optimum_available = True
+bnb_available = True
+
 # --- Core Imports ---
-from transformers import LlamaForCausalLM, AutoTokenizer # Use AutoTokenizer
 # --- HiDream Specific Imports ---
 # Attempt local import first, then fallback (which might fail)
 try:
@@ -139,9 +114,6 @@ elif filtered_model_count < original_model_count:
 # Define BitsAndBytes configs (if available)
 bnb_llm_config = None
 bnb_transformer_4bit_config = None
-if bnb_available:
-    bnb_llm_config = TransformersBitsAndBytesConfig(load_in_4bit=True)
-    bnb_transformer_4bit_config = DiffusersBitsAndBytesConfig(load_in_4bit=True)
 
 model_dtype = torch.bfloat16
 
@@ -170,6 +142,7 @@ def load_models(model_type, use_uncensored_llm):
         raise ImportError("Cannot load models: HiDream classes failed to import.")
     if model_type not in MODEL_CONFIGS:
         raise ValueError(f"Unknown or incompatible model_type: {model_type}")
+    from transformers import LlamaForCausalLM, AutoTokenizer
     
     config = MODEL_CONFIGS[model_type]
     model_path = config["path"]
@@ -215,6 +188,9 @@ def load_models(model_type, use_uncensored_llm):
         else: 
             llama_model_name = ORIGINAL_LLAMA_MODEL_NAME
         print(f"\n[1a] Preparing LLM (4-bit BNB): {llama_model_name}")
+        from transformers import BitsAndBytesConfig as TransformersBitsAndBytesConfig
+        from diffusers import BitsAndBytesConfig as DiffusersBitsAndBytesConfig
+        bnb_llm_config = TransformersBitsAndBytesConfig(load_in_4bit=True)
         if bnb_llm_config:
             text_encoder_load_kwargs["quantization_config"] = bnb_llm_config
             print("     Using 4-bit BNB.")
@@ -249,6 +225,8 @@ def load_models(model_type, use_uncensored_llm):
         print("     Type: NF4")
     else:  # Default BNB case
         print("     Type: Standard (Applying 4-bit BNB quantization)")
+        from diffusers import BitsAndBytesConfig as DiffusersBitsAndBytesConfig
+        bnb_transformer_4bit_config = DiffusersBitsAndBytesConfig(load_in_4bit=True)
         if bnb_transformer_4bit_config:
             transformer_load_kwargs["quantization_config"] = bnb_transformer_4bit_config
         else:
