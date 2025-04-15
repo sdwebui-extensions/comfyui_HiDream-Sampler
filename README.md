@@ -11,6 +11,7 @@ What is on my list and where you could support me:
 - [ ] **GGUF Support:** Integrate [Calcuis Model](https://huggingface.co/calcuis/hidream-gguf/tree/main)
 - [ ] **Local Checkpoints:** Get rid of hugging face download logic
 - [ ] **Bat installer:** For the standalone/ windows/ portable users of ComfyUI
+- [ ] **Make installation overall easier:** currently many users have problems with the installation process. Meanwhile try to follow this [video](https://www.youtube.com/watch?v=KRnJCLdgdRE) to get you going. 
 - [ ] **Multi Image for Img2img:** multi in, multi out
 - [ ] **Better uncensored LLM:** LLM which does not OOM, so if you have suggestions
 - [ ] **Manual attention checker:** At least for the advance mode, choose between sage, sdpa or flash maually
