@@ -480,7 +480,7 @@ class HiDreamSampler:
             }
         }
     
-    def generate(self, model_type, prompt, negative_prompt, resolution, num_images, seed, scheduler, override_steps, override_cfg, override_width, override_height):
+    def generate(self, model_type, prompt, negative_prompt, resolution, num_images, seed, scheduler, override_steps, override_cfg, override_shift, override_width, override_height): # <-- Added override_shift
         use_uncensored_llm = None
 
         # Determine resolution
