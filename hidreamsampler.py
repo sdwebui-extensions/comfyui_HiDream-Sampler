@@ -86,7 +86,7 @@ ORIGINAL_MODEL_PREFIX = "HiDream-ai"
 NF4_MODEL_PREFIX = "azaneko"
 
 ORIGINAL_LLAMA_MODEL_NAME = "nvidia/Llama-3.1-Nemotron-Nano-8B-v1" 
-NF4_LLAMA_MODEL_NAME = "hugging-quants/Meta-Llama-3.1-8B-Instruct-GPTQ-INT4"
+NF4_LLAMA_MODEL_NAME = "ModelCloud/Meta-Llama-3.1-8B-Instruct-gptq-4bit"
 UNCENSORED_LLAMA_MODEL_NAME = "Orenguteng/Llama-3.1-8B-Lexi-Uncensored-V2" 
 UNCENSORED_NF4_LLAMA_MODEL_NAME = "shuttercat/DarkIdol-Llama3.1-NF4-GPTQ"
 

@@ -1,5 +1,3 @@
-## Urgent! hugging-quants/Meta-Llama-3.1-8B-Instruct-GPTQ-INT4 Repo was deleted couple of minutes ago, so the node wont work as expected. Please suggest alteratives, I'll look into asap
-
 ## Announcement
 
 We have now a bunch of forks for this, and with [SanDiegoDude/ComfyUI-HiDream-Sampler](https://github.com/SanDiegoDude/ComfyUI-HiDream-Sampler/) actively maintaining, feel free to check out his awsome work, which might solve some issues.
