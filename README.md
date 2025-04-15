@@ -20,6 +20,7 @@ What is on my list and where you could support me:
 - [ ] **System Prompt presets:** Explore good working system prompts for various use cases
 - [ ] **Clean up UI:** Clearer naming, tooltips for inputs and rearrange the fields for faster work
 - [ ] **Explore Lora:** While the first Loras for HiDream are being explored it would be good to know how to implement them without big performance losses
+- [ ] **Explore HiResFix Capabilites via Img2img:** Dig into HiResFix to have a propper Upscale via native HiDream
 
 ## Updates 14.04.
 
