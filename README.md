@@ -1,7 +1,8 @@
-## Imagequality is currently not the best, I'll try to find the issue tomorrow!
+## Updates 14.04.
 
-## Updates 13.04.
-
+- fixed uncensored llm support
+- fixed pipelines
+- fixed image output
 - fixed cache overload
 - Added multi image generation (up to 8) (Img2img not yet supported!)
 - Fixed Sageattention fetch as first attention method.
@@ -32,8 +33,12 @@ A custom ComfyUI node for generating images using the HiDream AI model.
     ```bash
     pip install -r requirements.txt
     ```
-
-3. Restart ComfyUI.
+    or for the portable version:
+   ```bash
+   .\python_embeded\python.exe -m pip install -r .\ComfyUI\custom_nodes\comfyui_HiDream-Sampler\requirements.txt
+   ```
+   
+4. Restart ComfyUI.
 
 Steps to install SageAttention 1:
 - Install triton.
