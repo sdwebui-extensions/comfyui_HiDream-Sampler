@@ -594,7 +594,7 @@ class HiDreamSampler:
                     use_exponential_sigmas=True
                 )
                 pipe.scheduler = new_scheduler
-             else: # Should not happen with current options, but good practice
+        else: # Should not happen with current options, but good practice
                 print(f"Warning: Unknown scheduler option '{scheduler}'. Using default.")
                 pipe.scheduler = get_scheduler_instance(original_scheduler_class, shift_value)
 
