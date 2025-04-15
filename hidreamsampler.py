@@ -944,9 +944,6 @@ class HiDreamSamplerAdvanced:
                     use_exponential_sigmas=True
                 )
                 pipe.scheduler = new_scheduler
-             else: # Should not happen with current options, but good practice
-                print(f"Warning: Unknown scheduler option '{scheduler}'. Using default.")
-                pipe.scheduler = get_scheduler_instance(original_scheduler_class, shift_value)
         else:
             # Ensure we're using the original scheduler as specified in the model config
             print(f"Using model's default scheduler type: {original_scheduler_class} with shift={shift_value}")
