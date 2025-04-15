@@ -474,6 +474,7 @@ class HiDreamSampler:
                 "scheduler": (scheduler_options, {"default": "Default for model"}),
                 "override_steps": ("INT", {"default": -1, "min": -1, "max": 100}),
                 "override_cfg": ("FLOAT", {"default": -1.0, "min": -1.0, "max": 20.0, "step": 0.1}),
+                "override_shift": ("FLOAT", {"default": -1.0, "min": -1.0, "max": 20.0, "step": 0.1}), # <-- Added Shift Override
                 "override_width": ("INT", {"default": 0, "min": 0, "max": 4096, "step": 8}),
                 "override_height": ("INT", {"default": 0, "min": 0, "max": 4096, "step": 8})
             }
