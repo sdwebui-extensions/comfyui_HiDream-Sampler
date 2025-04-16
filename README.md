@@ -4,10 +4,13 @@ We have now a bunch of forks for this, and with [SanDiegoDude/ComfyUI-HiDream-Sa
 
 I will have a bit of time over easter to work on the node, but it will be updated at my pace and capabilities.
 
+[comfyanonymous](https://github.com/comfyanonymous/ComfyUI/commit/9ad792f92706e2179c58b2e5348164acafa69288) is supposed to support HiDream natively soon, so expect a lot of code changes.
+
 If anyone would like to contribute, I'd LOVE you to reach out or do PRs, as I am not able to solve all the issues alone (Used to be an [illustrator](https://benjaminbertram.com/) not a dev by trade :D )
 
 What is on my list and where you could support me:
 
+- [ ] **Edit capabilites:** Integrate [editing capabilities](https://github.com/HiDream-ai/HiDream-E1)
 - [ ] **GGUF Support:** Integrate [Calcuis Model](https://huggingface.co/calcuis/hidream-gguf/tree/main)
 - [ ] **Local Checkpoints:** Get rid of hugging face download logic
 - [ ] **Bat installer:** For the standalone/ windows/ portable users of ComfyUI
