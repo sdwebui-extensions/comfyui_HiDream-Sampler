@@ -2,7 +2,7 @@
 
 In the meanwhile update your comfy and you can test the model with less struggle you might have installing this node ;) 
 You need their official [HiDream Model](https://huggingface.co/city96/HiDream-I1-Dev-gguf/tree/main) and the four [text encoders](https://huggingface.co/Comfy-Org/HiDream-I1_ComfyUI/tree/main/split_files/text_encoders).
-Sample Workflow is here
+Sample Workflow is in the Workflow folder
 
 ## Announcement
 
