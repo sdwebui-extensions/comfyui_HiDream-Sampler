@@ -1,10 +1,14 @@
+##[comfyanonymous](https://github.com/comfyanonymous/ComfyUI/commit/9ad792f92706e2179c58b2e5348164acafa69288) is now supporting HiDream natively, so I will focus on improving the HiDream Advanced Node and abandon the dependency of diffusers soon(TM).## 
+
+In the meanwhile update your comfy and you can test the model with less struggle you might have installing this node ;) 
+You need their official [HiDream Model](https://huggingface.co/city96/HiDream-I1-Dev-gguf/tree/main) and the four [text encoders](https://huggingface.co/Comfy-Org/HiDream-I1_ComfyUI/tree/main/split_files/text_encoders).
+Sample Workflow is here
+
 ## Announcement
 
 We have now a bunch of forks for this, and with [SanDiegoDude/ComfyUI-HiDream-Sampler](https://github.com/SanDiegoDude/ComfyUI-HiDream-Sampler/) actively maintaining, feel free to check out his awsome work, which might solve some issues.
 
 I will have a bit of time over easter to work on the node, but it will be updated at my pace and capabilities.
-
-[comfyanonymous](https://github.com/comfyanonymous/ComfyUI/commit/9ad792f92706e2179c58b2e5348164acafa69288) is supposed to support HiDream natively soon, so expect a lot of code changes.
 
 If anyone would like to contribute, I'd LOVE you to reach out or do PRs, as I am not able to solve all the issues alone (Used to be an [illustrator](https://benjaminbertram.com/) not a dev by trade :D )
 
