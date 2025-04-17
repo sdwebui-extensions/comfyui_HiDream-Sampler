@@ -1,3 +1,34 @@
+## [comfyanonymous](https://github.com/comfyanonymous/ComfyUI/commit/9ad792f92706e2179c58b2e5348164acafa69288) is now supporting HiDream natively, so I will focus on improving the HiDream Advanced Node and abandon the dependency of diffusers soon(TM).
+
+In the meanwhile update your comfy and you can test the model with less struggle you might have installing this node ;) 
+You need their official [HiDream Model](https://huggingface.co/city96/HiDream-I1-Dev-gguf/tree/main) and the four [text encoders](https://huggingface.co/Comfy-Org/HiDream-I1_ComfyUI/tree/main/split_files/text_encoders).
+Sample Workflow is in the Workflow folder
+
+## Announcement
+
+We have now a bunch of forks for this, and with [SanDiegoDude/ComfyUI-HiDream-Sampler](https://github.com/SanDiegoDude/ComfyUI-HiDream-Sampler/) actively maintaining, feel free to check out his awsome work, which might solve some issues.
+
+I will have a bit of time over easter to work on the node, but it will be updated at my pace and capabilities.
+
+If anyone would like to contribute, I'd LOVE you to reach out or do PRs, as I am not able to solve all the issues alone (Used to be an [illustrator](https://benjaminbertram.com/) not a dev by trade :D )
+
+What is on my list and where you could support me:
+
+- [ ] **Edit capabilites:** Integrate [editing capabilities](https://github.com/HiDream-ai/HiDream-E1)
+- [ ] **GGUF Support:** Integrate [Calcuis Model](https://huggingface.co/calcuis/hidream-gguf/tree/main)
+- [ ] **Local Checkpoints:** Get rid of hugging face download logic
+- [ ] **Bat installer:** For the standalone/ windows/ portable users of ComfyUI
+- [ ] **Make installation overall easier:** currently many users have problems with the installation process. Meanwhile try to follow this [video](https://www.youtube.com/watch?v=KRnJCLdgdRE) to get you going. 
+- [ ] **Multi Image for Img2img:** multi in, multi out
+- [ ] **Better uncensored LLM:** LLM which does not OOM, so if you have suggestions
+- [ ] **Manual attention checker:** At least for the advance mode, choose between sage, sdpa or flash maually
+- [ ] **Beautifiy codebase:** Currently a lot of repetition and thus prone to errors
+- [ ] **Cancel generation:** Currently generation can't be cancelled with the stop button
+- [ ] **System Prompt presets:** Explore good working system prompts for various use cases
+- [ ] **Clean up UI:** Clearer naming, tooltips for inputs and rearrange the fields for faster work
+- [ ] **Explore Lora:** While the first Loras for HiDream are being explored it would be good to know how to implement them without big performance losses
+- [ ] **Explore HiResFix Capabilites via Img2img:** Dig into HiResFix to have a propper Upscale via native HiDream
+
 ## Updates 14.04.
 
 - fixed uncensored llm support

@@ -90,7 +90,7 @@ ORIGINAL_MODEL_PREFIX = "HiDream-ai"
 NF4_MODEL_PREFIX = "azaneko"
 
 ORIGINAL_LLAMA_MODEL_NAME = "nvidia/Llama-3.1-Nemotron-Nano-8B-v1" 
-NF4_LLAMA_MODEL_NAME = "hugging-quants/Meta-Llama-3.1-8B-Instruct-GPTQ-INT4"
+NF4_LLAMA_MODEL_NAME = "ModelCloud/Meta-Llama-3.1-8B-Instruct-gptq-4bit"
 UNCENSORED_LLAMA_MODEL_NAME = "Orenguteng/Llama-3.1-8B-Lexi-Uncensored-V2" 
 UNCENSORED_NF4_LLAMA_MODEL_NAME = "shuttercat/DarkIdol-Llama3.1-NF4-GPTQ"
 
@@ -313,8 +313,11 @@ def load_models(model_type, use_uncensored_llm=False):
     step2_mem = torch.cuda.memory_allocated() / 1024**2 if torch.cuda.is_available() else 0; print(f"✅ Transformer loaded! (VRAM: {step2_mem:.2f} MB)")
     
     # --- 3. Load Scheduler ---
-    print(f"\n[3] Preparing Scheduler: {scheduler_name}"); scheduler = get_scheduler_instance(scheduler_name, shift); print(f"     Using Scheduler: {scheduler_name}")
-    
+    # Load the scheduler using the default shift value from the config initially
+    print(f"\n[3] Preparing Scheduler: {scheduler_name} (Default shift: {shift})")
+    scheduler = get_scheduler_instance(scheduler_name, shift)
+    print(f"     Using Scheduler: {scheduler_name}")
+
     # --- 4. Load Pipeline ---
     print(f"\n[4] Loading Pipeline from: {model_path}"); print("     Passing pre-loaded components...")
     pipe = HiDreamImagePipeline.from_pretrained(model_path, scheduler=scheduler, tokenizer_4=tokenizer, text_encoder_4=text_encoder, transformer=None, torch_dtype=model_dtype, low_cpu_mem_usage=True); print("     Pipeline structure loaded.")
@@ -484,12 +487,13 @@ class HiDreamSampler:
                 "scheduler": (scheduler_options, {"default": "Default for model"}),
                 "override_steps": ("INT", {"default": -1, "min": -1, "max": 100}),
                 "override_cfg": ("FLOAT", {"default": -1.0, "min": -1.0, "max": 20.0, "step": 0.1}),
+                "override_shift": ("FLOAT", {"default": -1.0, "min": -1.0, "max": 20.0, "step": 0.1}), # <-- Added Shift Override
                 "override_width": ("INT", {"default": 0, "min": 0, "max": 4096, "step": 8}),
                 "override_height": ("INT", {"default": 0, "min": 0, "max": 4096, "step": 8})
             }
         }
     
-    def generate(self, model_type, prompt, negative_prompt, resolution, num_images, seed, scheduler, override_steps, override_cfg, override_width, override_height):
+    def generate(self, model_type, prompt, negative_prompt, resolution, num_images, seed, scheduler, override_steps, override_cfg, override_shift, override_width, override_height): # <-- Added override_shift
         use_uncensored_llm = None
 
         # Determine resolution
@@ -571,22 +575,27 @@ class HiDreamSampler:
         
         # --- Update scheduler if requested ---
         original_scheduler_class = config["scheduler_class"]
-        original_shift = config["shift"]
+        # Determine shift value: override if >= 0.0, else use config default
+        default_shift = config["shift"]
+        shift_value = override_shift if override_shift >= 0.0 else default_shift
+        print(f"Selected Shift Value: {shift_value} (Override: {override_shift}, Default: {default_shift})")
+
+
 
         if scheduler != "Default for model":
             print(f"Replacing default scheduler ({original_scheduler_class}) with: {scheduler}")
 
             # Create a completely fresh scheduler instance to avoid any parameter leakage
             if scheduler == "UniPC":
-                new_scheduler = FlowUniPCMultistepScheduler(num_train_timesteps=1000, shift=original_shift, use_dynamic_shifting=False)
+                new_scheduler = FlowUniPCMultistepScheduler(num_train_timesteps=1000, shift=shift_value, use_dynamic_shifting=False)
                 pipe.scheduler = new_scheduler
             elif scheduler == "Euler":
-                new_scheduler = FlashFlowMatchEulerDiscreteScheduler(num_train_timesteps=1000, shift=original_shift, use_dynamic_shifting=False)
+                new_scheduler = FlashFlowMatchEulerDiscreteScheduler(num_train_timesteps=1000, shift=shift_value, use_dynamic_shifting=False)
                 pipe.scheduler = new_scheduler
             elif scheduler == "Karras Euler":
                 new_scheduler = FlashFlowMatchEulerDiscreteScheduler(
                     num_train_timesteps=1000,
-                    shift=original_shift,
+                    shift=shift_value,
                     use_dynamic_shifting=False,
                     use_karras_sigmas=True
                 )
@@ -594,15 +603,16 @@ class HiDreamSampler:
             elif scheduler == "Karras Exponential":
                 new_scheduler = FlashFlowMatchEulerDiscreteScheduler(
                     num_train_timesteps=1000,
-                    shift=original_shift,
+                    shift=shift_value,
                     use_dynamic_shifting=False,
                     use_exponential_sigmas=True
                 )
                 pipe.scheduler = new_scheduler
+
         else:
             # Ensure we're using the original scheduler as specified in the model config
-            print(f"Using model's default scheduler: {original_scheduler_class}")
-            pipe.scheduler = get_scheduler_instance(original_scheduler_class, original_shift)
+            print(f"Using model's default scheduler type: {original_scheduler_class} with shift={shift_value}")
+            pipe.scheduler = get_scheduler_instance(original_scheduler_class, shift_value)
 
         # --- Generation Setup ---
         is_nf4_current = config.get("is_nf4", False)
@@ -632,7 +642,7 @@ class HiDreamSampler:
         print(f"Creating Generator on: {inference_device}")
         generator = torch.Generator(device=inference_device).manual_seed(seed)
         print(f"\n--- Starting Generation ---")
-        print(f"Model: {model_type}, Res: {height}x{width}, Steps: {num_inference_steps}, CFG: {guidance_scale}, Seed: {seed}")
+        print(f"Model: {model_type}, Res: {height}x{width}, Steps: {num_inference_steps}, CFG: {guidance_scale}, Shift: {pipe.scheduler.config.shift}, Seed: {seed}")
         print(f"Using standard sequence lengths: CLIP-L: {max_length_clip_l}, OpenCLIP: {max_length_openclip}, T5: {max_length_t5}, Llama: {max_length_llama}")
 
         # --- Run Inference ---
@@ -810,6 +820,7 @@ class HiDreamSamplerAdvanced:
                 "scheduler": (scheduler_options, {"default": "Default for model"}),
                 "override_steps": ("INT", {"default": -1, "min": -1, "max": 100}),
                 "override_cfg": ("FLOAT", {"default": -1.0, "min": -1.0, "max": 20.0, "step": 0.1}),
+                "override_shift": ("FLOAT", {"default": -1.0, "min": -1.0, "max": 20.0, "step": 0.1}), # <-- Added Shift Override
                 "override_width": ("INT", {"default": 0, "min": 0, "max": 4096, "step": 8}),
                 "override_height": ("INT", {"default": 0, "min": 0, "max": 4096, "step": 8}),
                 "use_uncensored_llm": ("BOOLEAN", {"default": False})
@@ -834,7 +845,7 @@ class HiDreamSamplerAdvanced:
             }
         }
     
-    def generate(self, model_type, primary_prompt, negative_prompt, resolution, num_images, seed, scheduler, override_steps, override_cfg, use_uncensored_llm=False, clip_l_prompt="", openclip_prompt="", t5_prompt="", llama_prompt="", llm_system_prompt="You are a creative AI assistant...", override_width=0, override_height=0, max_length_clip_l=77, max_length_openclip=77, max_length_t5=128, max_length_llama=128,clip_l_weight=1.0, openclip_weight=1.0, t5_weight=1.0, llama_weight=1.0, **kwargs):
+    def generate(self, model_type, primary_prompt, negative_prompt, resolution, num_images, seed, scheduler, override_steps, override_cfg, override_shift, use_uncensored_llm=False, clip_l_prompt="", openclip_prompt="", t5_prompt="", llama_prompt="", llm_system_prompt="You are a creative AI assistant...", override_width=0, override_height=0, max_length_clip_l=77, max_length_openclip=77, max_length_t5=128, max_length_llama=128,clip_l_weight=1.0, openclip_weight=1.0, t5_weight=1.0, llama_weight=1.0, **kwargs): # <-- Added override_shift
         
         # Determine resolution
         if override_width > 0 and override_height > 0:
@@ -916,22 +927,25 @@ class HiDreamSamplerAdvanced:
             
         # --- Update scheduler if requested ---
         original_scheduler_class = config["scheduler_class"]
-        original_shift = config["shift"]
+        # Determine shift value: override if >= 0.0, else use config default
+        default_shift = config["shift"]
+        shift_value = override_shift if override_shift >= 0.0 else default_shift
+        print(f"Selected Shift Value: {shift_value} (Override: {override_shift}, Default: {default_shift})")
         
         if scheduler != "Default for model":
             print(f"Replacing default scheduler ({original_scheduler_class}) with: {scheduler}")
             
             # Create a completely fresh scheduler instance to avoid any parameter leakage
             if scheduler == "UniPC":
-                new_scheduler = FlowUniPCMultistepScheduler(num_train_timesteps=1000, shift=original_shift, use_dynamic_shifting=False)
+                new_scheduler = FlowUniPCMultistepScheduler(num_train_timesteps=1000, shift=shift_value, use_dynamic_shifting=False)
                 pipe.scheduler = new_scheduler
             elif scheduler == "Euler":
-                new_scheduler = FlashFlowMatchEulerDiscreteScheduler(num_train_timesteps=1000, shift=original_shift, use_dynamic_shifting=False)
+                new_scheduler = FlashFlowMatchEulerDiscreteScheduler(num_train_timesteps=1000, shift=shift_value, use_dynamic_shifting=False)
                 pipe.scheduler = new_scheduler
             elif scheduler == "Karras Euler":
                 new_scheduler = FlashFlowMatchEulerDiscreteScheduler(
                     num_train_timesteps=1000, 
-                    shift=original_shift, 
+                    shift=shift_value,
                     use_dynamic_shifting=False,
                     use_karras_sigmas=True
                 )
@@ -939,15 +953,15 @@ class HiDreamSamplerAdvanced:
             elif scheduler == "Karras Exponential":
                 new_scheduler = FlashFlowMatchEulerDiscreteScheduler(
                     num_train_timesteps=1000, 
-                    shift=original_shift,
+                    shift=shift_value,
                     use_dynamic_shifting=False,
                     use_exponential_sigmas=True
                 )
                 pipe.scheduler = new_scheduler
         else:
             # Ensure we're using the original scheduler as specified in the model config
-            print(f"Using model's default scheduler: {original_scheduler_class}")
-            pipe.scheduler = get_scheduler_instance(original_scheduler_class, original_shift)
+            print(f"Using model's default scheduler type: {original_scheduler_class} with shift={shift_value}")
+            pipe.scheduler = get_scheduler_instance(original_scheduler_class, shift_value)
                 
         # --- Generation Setup ---
         is_nf4_current = config.get("is_nf4", False)
@@ -965,7 +979,7 @@ class HiDreamSamplerAdvanced:
         print(f"Creating Generator on: {inference_device}")
         generator = torch.Generator(device=inference_device).manual_seed(seed)
         print(f"\n--- Starting Generation ---")
-        print(f"Model: {model_type}{' (uncensored)' if use_uncensored_llm else ''}, Res: {height}x{width}, Steps: {num_inference_steps}, CFG: {guidance_scale}, Seed: {seed}")
+        print(f"Model: {model_type}{' (uncensored)' if use_uncensored_llm else ''}, Res: {height}x{width}, Steps: {num_inference_steps}, CFG: {guidance_scale}, Shift: {pipe.scheduler.config.shift}, Seed: {seed}")
         print(f"Sequence lengths - CLIP-L: {max_length_clip_l}, OpenCLIP: {max_length_openclip}, T5: {max_length_t5}, Llama: {max_length_llama}")
         
         # --- Run Inference ---
@@ -1179,6 +1193,7 @@ class HiDreamImg2Img:
                 "scheduler": (scheduler_options, {"default": "Default for model"}),
                 "override_steps": ("INT", {"default": -1, "min": -1, "max": 100}),
                 "override_cfg": ("FLOAT", {"default": -1.0, "min": -1.0, "max": 20.0, "step": 0.1}),
+                "override_shift": ("FLOAT", {"default": -1.0, "min": -1.0, "max": 20.0, "step": 0.1}), # <-- Added Shift Override
                 "use_uncensored_llm": ("BOOLEAN", {"default": False})
             },
             "optional": {
@@ -1278,7 +1293,7 @@ class HiDreamImg2Img:
         return x_result.permute(0, 2, 3, 1)
     
     def generate(self, model_type, image, denoising_strength, prompt, negative_prompt, 
-             seed, scheduler, override_steps, override_cfg, use_uncensored_llm=False,
+             seed, scheduler, override_steps, override_cfg, override_shift, use_uncensored_llm=False, # <-- Added override_shift
              llm_system_prompt="You are a creative AI assistant...",
              clip_l_weight=1.0, openclip_weight=1.0, t5_weight=1.0, llama_weight=1.0, **kwargs):
 
@@ -1390,20 +1405,24 @@ class HiDreamImg2Img:
         
         # Update scheduler if requested
         original_scheduler_class = config["scheduler_class"]
-        original_shift = config["shift"]
+        # Determine shift value: override if >= 0.0, else use config default
+        default_shift = config["shift"]
+        shift_value = override_shift if override_shift >= 0.0 else default_shift
+        print(f"Selected Shift Value: {shift_value} (Override: {override_shift}, Default: {default_shift})")
+             
         if scheduler != "Default for model":
             print(f"Replacing default scheduler ({original_scheduler_class}) with: {scheduler}")
             # Create a completely fresh scheduler instance to avoid any parameter leakage
             if scheduler == "UniPC":
-                new_scheduler = FlowUniPCMultistepScheduler(num_train_timesteps=1000, shift=original_shift, use_dynamic_shifting=False)
+                new_scheduler = FlowUniPCMultistepScheduler(num_train_timesteps=1000, shift=shift_value, use_dynamic_shifting=False)
                 pipe.scheduler = new_scheduler
             elif scheduler == "Euler":
-                new_scheduler = FlashFlowMatchEulerDiscreteScheduler(num_train_timesteps=1000, shift=original_shift, use_dynamic_shifting=False)
+                new_scheduler = FlashFlowMatchEulerDiscreteScheduler(num_train_timesteps=1000, shift=shift_value, use_dynamic_shifting=False)
                 pipe.scheduler = new_scheduler
             elif scheduler == "Karras Euler":
                 new_scheduler = FlashFlowMatchEulerDiscreteScheduler(
                     num_train_timesteps=1000,
-                    shift=original_shift,
+                    shift=shift_value,
                     use_dynamic_shifting=False,
                     use_karras_sigmas=True
                 )
@@ -1411,15 +1430,19 @@ class HiDreamImg2Img:
             elif scheduler == "Karras Exponential":
                 new_scheduler = FlashFlowMatchEulerDiscreteScheduler(
                     num_train_timesteps=1000,
-                    shift=original_shift,
+                    shift=shift_value,
                     use_dynamic_shifting=False,
                     use_exponential_sigmas=True
                 )
                 pipe.scheduler = new_scheduler
+            else: # Should not happen
+                 print(f"Warning: Unknown scheduler option '{scheduler}'. Using default.")
+                 pipe.scheduler = get_scheduler_instance(original_scheduler_class, shift_value)
+                
         else:
             # Ensure we're using the original scheduler as specified in the model config
-            print(f"Using model's default scheduler: {original_scheduler_class}")
-            pipe.scheduler = get_scheduler_instance(original_scheduler_class, original_shift)
+            print(f"Using model's default scheduler: {original_scheduler_class} with shift={shift_value}")
+            pipe.scheduler = get_scheduler_instance(original_scheduler_class, shift_value)
             
         # Setup generation parameters
         is_nf4_current = config.get("is_nf4", False) 
@@ -1445,7 +1468,7 @@ class HiDreamImg2Img:
         print(f"\n--- Starting Img2Img Generation ---")
         _, h, w, _ = image.shape
         print(f"Model: {model_type}{' (uncensored)' if use_uncensored_llm else ''}, Input Size: {h}x{w}")
-        print(f"Denoising: {denoising_strength}, Steps: {num_inference_steps}, CFG: {guidance_scale}, Seed: {seed}")
+        print(f"Denoising: {denoising_strength}, Steps: {num_inference_steps}, CFG: {guidance_scale}, Shift: {pipe.scheduler.config.shift}, Seed: {seed}")
 
         # --- Run Inference ---
         output_images = None
