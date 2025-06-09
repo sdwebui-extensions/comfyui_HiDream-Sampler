@@ -21,7 +21,7 @@ What is on my list and where you could support me:
 - [ ] **Make installation overall easier:** currently many users have problems with the installation process. Meanwhile try to follow this [video](https://www.youtube.com/watch?v=KRnJCLdgdRE) to get you going. 
 - [ ] **Multi Image for Img2img:** multi in, multi out
 - [ ] **Better uncensored LLM:** LLM which does not OOM, so if you have suggestions
-- [ ] **Manual attention checker:** At least for the advance mode, choose between sage, sdpa or flash maually
+- [ ] **Manual attention checker:** At least for the advance mode, choose between sage, sdpa or flash manually
 - [ ] **Beautifiy codebase:** Currently a lot of repetition and thus prone to errors
 - [ ] **Cancel generation:** Currently generation can't be cancelled with the stop button
 - [ ] **System Prompt presets:** Explore good working system prompts for various use cases
@@ -154,10 +154,8 @@ export HF_ENDPOINT=https://hf-mirror.com
 ## Requirements
 - ComfyUI
 - GPU (for model inference)
-
-## Notes
-Models are cached after the first load to improve performance and use 4-bit quantization models from https://github.com/hykilpikonna/HiDream-I1-nf4.
-Ensure you have sufficient VRAM (e.g., 16GB+ recommended for full mode).
+- Models are cached after the first load to improve performance and use 4-bit quantization models from https://github.com/hykilpikonna/HiDream-I1-nf4.
+- Ensure you have sufficient VRAM (e.g., 16GB+ recommended for full mode).
 
 ## Credits
 
@@ -166,8 +164,11 @@ Merged with [SanDiegoDude/ComfyUI-HiDream-Sampler](https://github.com/SanDiegoDu
 - Added NF4 (Full/Dev/Fast) download and load support
 - Added better memory handling
 - Added more informative CLI output for TQDM
-
 - Full/Dev/Fast requires roughly 27GB VRAM
 - NF4 requires roughly 15GB VRAM
 
 Build upon the original [HiDream-I1]https://github.com/HiDream-ai/HiDream-I1
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=lum3on/comfyui_HiDream-Sampler&type=Date)](https://www.star-history.com/#lum3on/comfyui_HiDream-Sampler&Date)
